@@ -1,5 +1,9 @@
 # Python Logic Language implementation
 
+class Puzzle(object):
+  def __init__(self):
+    self.categories = []
+
 class Category(object):
   def __init__(self, name = "Category", amount = 5, ordered = True):
     self.amount = amount
