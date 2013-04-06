@@ -8,6 +8,9 @@ class Puzzle(object):
     # returns a string
     # optimization opportunity: more efficient string concatenation
     string = ""
+    for category in self.categories:
+      if category.ordered:
+        string +="open util/ordering[" + category.name + "] as "+ category.name.lower() + "Ord\n"
     # create abstract signatures
     for index in range(len(self.categories)):
       before_names = [cat.name for cat in self.categories[:index]]
@@ -27,11 +30,18 @@ class Puzzle(object):
           string += "and\n\t\tx." + firstname.lower() + "_" + aname.lower() + " = this.@" + name.lower() + "_" + aname.lower()
         string += "\n"
       string += "}\n\n"
-      for member in self.categories[index].members:
+      members = self.categores[index].members
+      for member in members:
         string += "one sig " + member.name + " extends " + name + " {}\n"
-      string += "\n\n"
-
-    # if ordered, add ordering
+      string += "\n"
+      if self.categories[index].ordered:
+        string += "fact {\n"
+        ordname = name.lower() + "Ord"
+        string += "\t" + ordname + "/first = " members[o].name + "\n"
+        for m1, m2 in zip(members[:-1], members[1:]):
+          string += "\t" + ordname + "/next[" + m1.name + "] = " + m2.name + "\n"
+        string += "}\n\n"
+      string += "\n"
     # create clues
 
 class Category(object):

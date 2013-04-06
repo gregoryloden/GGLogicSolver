@@ -14,11 +14,20 @@ abstract sig House {
   house_cig: one Cigarette,
   house_drink: one Drink,
   house_color: one Color,
+  next_to: set House,
 }{
   one this.~nat_house
   one x: Nationality | x.nat_house = this and x.nat_pet = this.@house_pet and x.nat_cig = this.@house_cig and x.nat_drink = this.@house_drink and x.nat_color = this.@house_color
+  this.@next_to in {x: House | x = houseOrd/next[this] or x = houseOrd/prev[this]}
 }
 one sig H1, H2, H3, H4, H5 extends House {}
+fact {
+  houseOrd/first = H1
+  houseOrd/next[H1] = H2
+  houseOrd/next[H2] = H3
+  houseOrd/next[H3] = H4
+  houseOrd/next[H4] = H5
+}
 
 abstract sig Pet {
   pet_cig: one Cigarette,
@@ -46,7 +55,7 @@ abstract sig Drink {
   drink_color: one Color,
 }{
   one this.~nat_drink
-  one this.~hosue_drink
+  one this.~house_drink
   one this.~pet_drink
   one this.~cig_drink
   one x: Nationality | x.nat_drink = this and x.nat_color = this.@drink_color
@@ -71,13 +80,13 @@ fact{
   houseOrd/next[Ivory.~house_color] = Green.~house_color
   OldGold.~pet_cig = Snail
   Kool.cig_color = Yellow
-  #houseOrd/prevs[Milk.~house_drink] = 2
-  #houseOrd/prevs[Norwegian.nat_house] = 0
-  Chesterfield.~house_cig = {houseOrd/prev[Fox.~house_pet] or houseOrd/next[Fox.~house_pet]}
-  Kool.~house_cig = {houseOrd/prev[Horse.~house_pet] or houseOrd/next[Horse.~house_pet]}
+  Milk.~house_drink = H3
+  Norwegian.nat_house = H1
+  Chesterfield.~house_cig.next_to = Fox.~house_pet
+  Kool.~house_cig.next_to = Horse.~house_pet
   LuckyStrike.cig_drink = OrangeJuice
   Japanese.nat_cig = Parliament
-  Norwegian.nat_house in {houseOrd/prev[Blue.~house_color] or houseOrd/next[Blue.~house_color]}
+  Norwegian.nat_house.next_to = Blue.~house_color
 }
 
 pred solution {}
