@@ -1,4 +1,4 @@
-import LogicLanguage
+from LogicLanguage import *
 
 house = Category("House", 5, True)
 h1 = Member("H1")
@@ -81,7 +81,7 @@ f6 = Is(oldgold, snails)
 f7 = Is(kools, yellow)
 f8 = Is(milk, h3)
 f9 = Is(norwegian, h1)
-f10 = Or(ImmBefore(chesterfields, fox), ImmAfter(chesterfields, fox)
+f10 = Or(ImmBefore(chesterfields, fox), ImmAfter(chesterfields, fox))
 f11 = Or(ImmBefore(kools, horse), ImmAfter(kools, horse))
 f12 = Is(luckystrike, orangejuice)
 f13 = Is(japanese, parliaments)

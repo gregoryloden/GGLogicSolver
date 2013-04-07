@@ -9,35 +9,38 @@ class Puzzle(object):
     # returns a string
     # optimization opportunity: more efficient string concatenation
     string = ""
+    ordered_cat = None
     for category in self.categories:
       if category.ordered:
         string +="open util/ordering[" + category.name + "]\n"
+        ordered_cat = category.name
+
     # create abstract signatures
     for index in range(len(self.categories)):
       before_names = [cat.name for cat in self.categories[:index]]
       after_names = [cat.name for cat in self.categories[index + 1:]]
-      name = self.categories[index]
+      name = self.categories[index].name
       # try for a single pass through the lists for optimization later
       string += "abstract sig " + name + " {\n"
       for aname in after_names:
         string += "\t" + name.lower() + "_" + aname.lower() + " : one " + aname + ",\n"
-      string += "} {" 
+      string += "} {\n" 
       for bname in before_names:
-        string += "\t this.~" + bname.lower() + "_" + name.lower() + "\n"
+        string += "\tone this.~" + bname.lower() + "_" + name.lower() + "\n"
       if index != 0:
         firstname = self.categories[0].name
-        string += "\tall x : " + firstname + " | x." + firstname.lower() + "_" + name.lower() + " = this"
+        string += "\tone x : " + firstname + " | x." + firstname.lower() + "_" + name.lower() + " = this"
         for aname in after_names:
-          string += "and\n\t\tx." + firstname.lower() + "_" + aname.lower() + " = this.@" + name.lower() + "_" + aname.lower()
+          string += " and\n\t\tx." + firstname.lower() + "_" + aname.lower() + " = this.@" + name.lower() + "_" + aname.lower()
         string += "\n"
       string += "}\n\n"
-      members = self.categores[index].members
+      members = self.categories[index].members
       for member in members:
         string += "one sig " + member.name + " extends " + name + " {}\n"
       string += "\n"
       if self.categories[index].ordered:
         string += "fact {\n"
-        string += "\tfirst = " members[o].name + "\n"
+        string += "\tfirst = " +  members[0].name + "\n"
         for m1, m2 in zip(members[:-1], members[1:]):
           string += "\t" + m1.name + ".next = " + m2.name + "\n"
         string += "}\n\n"
@@ -45,7 +48,7 @@ class Puzzle(object):
     # create clues
     string += "fact {\n"
     for relationship in self.relationships:
-      string += "\t" + relationship.alloy([cat.name for cat in self.categories]) + "\n"
+      string += "\t" + relationship.alloy([cat.name for cat in self.categories], ordered_cat) + "\n"
     string += "}\n"
     string += "pred example {}\nrun example\n"
     return string
@@ -83,12 +86,12 @@ class Relationship(object):
 class Is (Relationship):
   def alloy(self, order, trash):
     fname = self.get_field_name(order)
-    return self.obj1.name + "." + fname + " = " self.obj2.name
+    return self.obj1.name + "." + fname + " = " + self.obj2.name
 
 class IsNot (Relationship):
   def alloy(self, order, trash):
     fname = self.get_field_name(order)
-    return self.obj1.name + "." + fname + " != " self.obj2.name
+    return self.obj1.name + "." + fname + " != " + self.obj2.name
 
 class Before (Relationship):
   def alloy(self, order, ordered_cat):
@@ -97,7 +100,7 @@ class Before (Relationship):
       part1 += "." + self.get_field_name(order, cat2 = ordered_cat)
     part2 = self.obj2.name
     if self.obj2.category.name != ordered_cat:
-      part2 += "." + self.get_field_name(order, cat1 = ordered_cat)
+      part2 += "." + self.get_field_name(order, cat1 = self.obj2.category.name, cat2 = ordered_cat)
     return part1 + " in " + part2 + ".prevs"
 
 class After (Relationship):
@@ -107,7 +110,7 @@ class After (Relationship):
       part1 += "." + self.get_field_name(order, cat2 = ordered_cat)
     part2 = self.obj2.name
     if self.obj2.category.name != ordered_cat:
-      part2 += "." + self.get_field_name(order, cat1 = ordered_cat)
+      part2 += "." + self.get_field_name(order, cat1 = self.obj2.category.name, cat2 = ordered_cat)
     return part1 + " in " + part2 + ".nexts"
 
 class ImmBefore (Relationship):
@@ -117,7 +120,7 @@ class ImmBefore (Relationship):
       part1 += "." + self.get_field_name(order, cat2 = ordered_cat)
     part2 = self.obj2.name
     if self.obj2.category.name != ordered_cat:
-      part2 += "." + self.get_field_name(order, cat1 = ordered_cat)
+      part2 += "." + self.get_field_name(order, cat1 = self.obj2.category.name, cat2 = ordered_cat)
     return part1 + " = " + part2 + ".prev"
 
 class ImmAfter (Relationship):
@@ -127,7 +130,7 @@ class ImmAfter (Relationship):
       part1 += "." + self.get_field_name(order, cat2 = ordered_cat)
     part2 = self.obj2.name
     if self.obj2.category.name != ordered_cat:
-      part2 += "." + self.get_field_name(order, cat1 = ordered_cat)
+      part2 += "." + self.get_field_name(order, cat1 = self.obj2.category.name, cat2 = ordered_cat)
     return part1 + " = " + part2 + ".next"
 
 class Or (Relationship):
