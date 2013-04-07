@@ -4,7 +4,7 @@ from parse_output import parse_output
 from LLImpl import puzzle
 
 # puts things into als, gets the answer, reads things from out.xml
-def main(imported_puzz = None):
+def solve(imported_puzz = None):
   if imported_puzz:
     category = imported_puzz.categories[0].name
     inals = imported_puzz.alloy()
@@ -22,5 +22,5 @@ def main(imported_puzz = None):
   return solution
 
 if __name__ == "__main__":
-  main()
+  solve()
 
