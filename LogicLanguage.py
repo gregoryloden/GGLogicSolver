@@ -3,6 +3,7 @@
 class Puzzle(object):
   def __init__(self):
     self.categories = []
+    self.relationships = []
 
   def alloy(self):
     # returns a string
@@ -10,7 +11,7 @@ class Puzzle(object):
     string = ""
     for category in self.categories:
       if category.ordered:
-        string +="open util/ordering[" + category.name + "] as "+ category.name.lower() + "Ord\n"
+        string +="open util/ordering[" + category.name + "]\n"
     # create abstract signatures
     for index in range(len(self.categories)):
       before_names = [cat.name for cat in self.categories[:index]]
@@ -36,14 +37,19 @@ class Puzzle(object):
       string += "\n"
       if self.categories[index].ordered:
         string += "fact {\n"
-        ordname = name.lower() + "Ord"
-        string += "\t" + ordname + "/first = " members[o].name + "\n"
+        string += "\tfirst = " members[o].name + "\n"
         for m1, m2 in zip(members[:-1], members[1:]):
-          string += "\t" + ordname + "/next[" + m1.name + "] = " + m2.name + "\n"
+          string += "\t" + m1.name + ".next = " + m2.name + "\n"
         string += "}\n\n"
       string += "\n"
     # create clues
-
+    string += "fact {\n"
+    for relationship in self.relationships:
+      string += "\t" + relationship.alloy([cat.name for cat in self.categories]) + "\n"
+    string += "}\n"
+    string += "pred example {}\nrun example\n"
+    return string
+   
 class Category(object):
   def __init__(self, name = "Category", amount = 5, ordered = False):
     self.amount = amount
@@ -51,29 +57,81 @@ class Category(object):
     self.members = []
     self.name = name
 
+  def add(self, member):
+    self.members.append(member)
+    member.category = self
+
 class Member(object):
   def __init__(self, name = "Object"):
     self.name = name
+    self.category = None
 
 class Relationship(object):
   def __init__(self, obj1 = None, obj2 = None):
    self.obj1 = obj1
    self.obj2 = obj2
+  
+  def get_field_name(self, order, cat1 = None, cat2 = None):
+    cat1 = self.obj1.category.name if cat1 == None else cat1
+    cat2 = self.obj2.category.name if cat2 == None else cat2
+    if order.index(cat1) < order.index(cat2):
+      return cat1.lower() + "_" + cat2.lower()
+    else:
+      return "~" + cat2.lower() + "_" + cat1.lower()
+
 
 class Is (Relationship):
-  pass
+  def alloy(self, order, trash):
+    fname = self.get_field_name(order)
+    return self.obj1.name + "." + fname + " = " self.obj2.name
 
 class IsNot (Relationship):
-  pass
+  def alloy(self, order, trash):
+    fname = self.get_field_name(order)
+    return self.obj1.name + "." + fname + " != " self.obj2.name
 
 class Before (Relationship):
-  pass
+  def alloy(self, order, ordered_cat):
+    part1 = self.obj1.name
+    if self.obj1.category.name != ordered_cat:
+      part1 += "." + self.get_field_name(order, cat2 = ordered_cat)
+    part2 = self.obj2.name
+    if self.obj2.category.name != ordered_cat:
+      part2 += "." + self.get_field_name(order, cat1 = ordered_cat)
+    return part1 + " in " + part2 + ".prevs"
 
 class After (Relationship):
-  pass
+  def alloy(self, order, ordered_cat):
+    part1 = self.obj1.name
+    if self.obj1.category.name != ordered_cat:
+      part1 += "." + self.get_field_name(order, cat2 = ordered_cat)
+    part2 = self.obj2.name
+    if self.obj2.category.name != ordered_cat:
+      part2 += "." + self.get_field_name(order, cat1 = ordered_cat)
+    return part1 + " in " + part2 + ".nexts"
 
 class ImmBefore (Relationship):
-  pass
+  def alloy(self, order, ordered_cat):
+    part1 = self.obj1.name
+    if self.obj1.category.name != ordered_cat:
+      part1 += "." + self.get_field_name(order, cat2 = ordered_cat)
+    part2 = self.obj2.name
+    if self.obj2.category.name != ordered_cat:
+      part2 += "." + self.get_field_name(order, cat1 = ordered_cat)
+    return part1 + " = " + part2 + ".prev"
 
 class ImmAfter (Relationship):
-  pass
+  def alloy(self, order, ordered_cat):
+    part1 = self.obj1.name
+    if self.obj1.category.name != ordered_cat:
+      part1 += "." + self.get_field_name(order, cat2 = ordered_cat)
+    part2 = self.obj2.name
+    if self.obj2.category.name != ordered_cat:
+      part2 += "." + self.get_field_name(order, cat1 = ordered_cat)
+    return part1 + " = " + part2 + ".next"
+
+class Or (Relationship):
+  def alloy(self, order, ordered_cat):
+    part1 = self.obj1.alloy(order, ordered_cat)
+    part2 = self.obj2.alloy(order, ordered_cat)
+    return part1 + " or " + part2
