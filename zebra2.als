@@ -1,4 +1,4 @@
-open util/ordering[House] as houseOrd
+open util/ordering[House] 
 
 abstract sig Nationality {
   nat_house: one House,
@@ -18,15 +18,15 @@ abstract sig House {
 }{
   one this.~nat_house
   one x: Nationality | x.nat_house = this and x.nat_pet = this.@house_pet and x.nat_cig = this.@house_cig and x.nat_drink = this.@house_drink and x.nat_color = this.@house_color
-  this.@next_to in {x: House | x = houseOrd/next[this] or x = houseOrd/prev[this]}
+  this.@next_to in {x: House | x = this.next or x = this.prev} 
 }
 one sig H1, H2, H3, H4, H5 extends House {}
 fact {
-  houseOrd/first = H1
-  houseOrd/next[H1] = H2
-  houseOrd/next[H2] = H3
-  houseOrd/next[H3] = H4
-  houseOrd/next[H4] = H5
+  first = H1
+  next[H1] = H2
+  next[H2] = H3
+  next[H3] = H4
+  next[H4] = H5
 }
 
 abstract sig Pet {
@@ -77,7 +77,7 @@ fact{
   Spanish.nat_pet = Dog
   Coffee.drink_color = Green
   Ukranian.nat_drink = Tea
-  houseOrd/next[Ivory.~house_color] = Green.~house_color
+  next[Ivory.~house_color] = Green.~house_color
   OldGold.~pet_cig = Snail
   Kool.cig_color = Yellow
   Milk.~house_drink = H3

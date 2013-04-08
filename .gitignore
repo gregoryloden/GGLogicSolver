@@ -1,0 +1,4 @@
+*.swp
+*.pyc
+in.als
+out.xml
