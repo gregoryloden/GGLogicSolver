@@ -1,0 +1,29 @@
+3 5 True
+Days
+Three
+Four
+Five
+Six
+Seven
+Order
+First
+Second
+Third
+Fourth
+Fifth
+Pet
+Cat
+GuineaPig
+Iguana
+Parrot
+Turtle
+Cat Before Seven
+Cat IsNot First
+Turtle IsNot Fifth
+Cat IsNot Fifth
+Third Is Five
+Third Is GuineaPig
+Parrot After Three
+Turtle After Parrot
+Turtle Before Seven
+Fourth Is Four
