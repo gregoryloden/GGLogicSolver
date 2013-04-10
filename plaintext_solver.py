@@ -23,9 +23,18 @@ def parse_file(filename):
     puzzle.categories.append(cat)
   for line in f.readlines():
     tokens = line.split()
-    m1 = helper[tokens[0]]
-    m2 = helper[tokens[2]]
-    fun_string = tokens[1] + "(m1, m2)"
+    if len(tokens) == 7 and tokens[3] == "Or":
+      m1 = helper[tokens[0]]
+      m2 = helper[tokens[2]]
+      fun_string1 = tokens[1] + "(m1, m2)"
+      m1 = helper[tokens[4]]
+      m2 = helper[tokens[6]]
+      fun_string2 = tokens[5] + "(m1, m2)"
+      fun_string = "Or("+fun_string1+","+fun_string2+")"
+    else: 
+      m1=helper[tokens[0]]
+      m2 = helper[tokens[2]]
+      fun_string = tokens[1] + "(m1, m2)"
     puzzle.relationships.append(eval(fun_string))
   return puzzle
 

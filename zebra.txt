@@ -1,0 +1,51 @@
+6 5 True
+House
+H1
+H2
+H3
+H4
+H5
+Nationality
+Norwegian
+English
+Spanish
+Ukranian
+Japanese
+Color
+Red
+Green
+Ivory
+Blue
+Yellow
+Pet
+Dog
+Snail
+Horse
+Fox
+Zebra
+Drink
+Coffee
+Tea
+Milk
+OrangeJuice
+Water
+Smoke
+OldGold
+Kools
+Chesterfield
+LuckyStrike
+Parliaments
+English Is Red
+Spanish Is Dog
+Coffee Is Green
+Ukranian Is Tea
+Green ImmAfter Ivory
+OldGold Is Snail
+Kools Is Yellow
+Milk Is H3
+Norwegian Is H1
+Chesterfield ImmBefore Fox Or Chesterfield ImmAfter Fox
+Kools ImmBefore Horse Or Kools ImmAfter Horse
+LuckyStrike Is OrangeJuice
+Japanese Is Parliaments
+Norwegian ImmBefore Blue Or Norwegian ImmAfter Blue
