@@ -1,0 +1,11 @@
+2 3 False
+Letter
+A
+B
+C
+Number
+1
+2
+3
+A Is 1
+B IsNot 2 Or A Is 2
