@@ -18,7 +18,9 @@ def solve(imported_puzz = None):
   call(["java","-cp", "alloy4.2.jar:.","AlloyCompiler","in.als"])
   solution = parse_output(category)
   #display solution
-  print solution
+  widths = [max(len(value) for value in column) + 4 for column in zip(*solution)]
+  for line in solution:
+    print(''.join('%-*s' % item for item in zip(widths, line)))
   return solution
 
 if __name__ == "__main__":

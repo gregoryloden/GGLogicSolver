@@ -1,0 +1,31 @@
+3 5 False
+Person
+Devon
+Jamie
+Lee
+Ryan
+Toby
+Frame
+Glass
+Pewter
+Porcelain
+Silver
+Wood
+Relationship
+Grandson
+Husband
+Mother
+SisterInLaw
+Son
+Husband Is Pewter
+SisterInLaw IsNot Toby
+SisterInLaw IsNot Devon
+Toby IsNot Silver
+Lee Is Mother
+Silver Is Grandson
+Devon IsNot Pewter
+Devon IsNot Silver
+Ryan IsNot SisterInLaw
+Son IsNot Glass
+Son IsNot Wood
+Mother IsNot Wood
