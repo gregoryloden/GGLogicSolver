@@ -18,10 +18,12 @@ public class AlloyCompiler {
     A4Options opts = new A4Options();
     opts.solver = A4Options.SatSolver.SAT4J;
 
+    String cwd = System.getProperty("user.dir");
+
     for (Command command: mod.getAllCommands()) {
       A4Solution ans = TranslateAlloyToKodkod.execute_command(null, mod.getAllReachableSigs(), command, opts);
       if (ans.satisfiable()) {
-        ans.writeXML("out.xml");
+        ans.writeXML(cwd+"\\out.xml");
       }else System.out.println("Not satisfiable.");
     }
   }
