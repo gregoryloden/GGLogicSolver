@@ -15,13 +15,13 @@ def solve(imported_puzz = None):
     category = puzzle.categories[0].name
     inals = puzzle.alloy()
   #write data to in.als
-  f = open(cwd+"\\in.als", 'w')
+  f = open(cwd+"/in.als", 'w')
   f.write(inals)
   f.close()
   sep = ":"
-  if "win" in platform:
+  if re.match("^win.*", platform):
     sep = ";"
-  call(["java","-cp", cwd+"\\alloy4.2.jar"+sep+cwd,"AlloyCompiler",cwd+"\\in.als"])
+  call(["java","-cp", cwd+"/alloy4.2.jar"+sep+cwd,"AlloyCompiler",cwd+"/in.als"])
   solution = parse_output(category)
   #display solution
   widths = [max(len(value) for value in column) + 4 for column in zip(*solution)]

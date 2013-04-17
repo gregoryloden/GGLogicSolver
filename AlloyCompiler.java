@@ -23,7 +23,7 @@ public class AlloyCompiler {
     for (Command command: mod.getAllCommands()) {
       A4Solution ans = TranslateAlloyToKodkod.execute_command(null, mod.getAllReachableSigs(), command, opts);
       if (ans.satisfiable()) {
-        ans.writeXML(cwd+"\\out.xml");
+        ans.writeXML(cwd+"/out.xml");
       }else System.out.println("Not satisfiable.");
     }
   }
