@@ -5,6 +5,10 @@ class Puzzle(object):
     self.categories = []
     self.relationships = []
 
+  def xml(self):
+    string = "<puzzle>"
+    string += "<categories>"
+
   def alloy(self):
     # returns a string
     # optimization opportunity: more efficient string concatenation
