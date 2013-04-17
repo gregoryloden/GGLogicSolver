@@ -1,7 +1,7 @@
 def parse_output(category):
   label = "this/" + category
   import xml.etree.ElementTree as ET
-  tree = ET.parse('out.xml')
+  tree = ET.parse(cwd+"\\out.xml")
   root = tree.getroot()
   pid = root.find(".//sig[@label='"+label+"']").attrib["ID"]
   elems = root.findall(".//field[@parentID='"+pid+"']")
