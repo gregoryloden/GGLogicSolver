@@ -3,6 +3,7 @@ from parse_output import parse_output
 #fix this later
 from LLImpl import puzzle
 from os import getcwd
+from sys import platform
 
 # puts things into als, gets the answer, reads things from out.xml
 def solve(imported_puzz = None):
@@ -17,7 +18,10 @@ def solve(imported_puzz = None):
   f = open(cwd+"\\in.als", 'w')
   f.write(inals)
   f.close()
-  call(["java","-cp", cwd+"\\alloy4.2.jar:"+cwd,cwd+"\\AlloyCompiler",cwd+"\\in.als"])
+  sep = ":"
+  if "win" in platform():
+    sep = ";"
+  call(["java","-cp", cwd+"\\alloy4.2.jar"+sep+cwd,"AlloyCompiler",cwd+"\\in.als"])
   solution = parse_output(category)
   #display solution
   widths = [max(len(value) for value in column) + 4 for column in zip(*solution)]
