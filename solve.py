@@ -19,7 +19,7 @@ def solve(imported_puzz = None):
   f.write(inals)
   f.close()
   sep = ":"
-  if re.match("^win.*", platform()):
+  if "win" in platform:
     sep = ";"
   call(["java","-cp", cwd+"\\alloy4.2.jar"+sep+cwd,"AlloyCompiler",cwd+"\\in.als"])
   solution = parse_output(category)

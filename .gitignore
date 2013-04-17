@@ -2,3 +2,5 @@
 *.pyc
 in.als
 out.xml
+gui.py
+balloons.txt
