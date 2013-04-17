@@ -1,9 +1,9 @@
 from subprocess import call
 from parse_output import parse_output
-#fix this later
 from LLImpl import puzzle
 from os import getcwd
 from sys import platform
+import re
 
 # puts things into als, gets the answer, reads things from out.xml
 def solve(imported_puzz = None):
@@ -19,7 +19,7 @@ def solve(imported_puzz = None):
   f.write(inals)
   f.close()
   sep = ":"
-  if "win" in platform():
+  if re.match("^win.*", platform()):
     sep = ";"
   call(["java","-cp", cwd+"\\alloy4.2.jar"+sep+cwd,"AlloyCompiler",cwd+"\\in.als"])
   solution = parse_output(category)
