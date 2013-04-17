@@ -1,0 +1,19 @@
+Use the text box to input information into the text fields.
+
+Click "Add Category" to add the text as a category. Categories appear in the Categories field as they are written in the entry box.
+
+Click "Add Item" to add the text as an item for a category. Items appear in the Categories field with "- " added to the beginning of the item.
+You can only add items after doing one of the following:
+	-selecting a category in the Categories field, which adds the item to the bottom of the category's item list
+	-selecting an item in the Categories field, which adds the item right below the selected item
+
+Click "Add Relation" to add the text as a relation between items.
+Your relation can take either of the following forms:
+	[Item] [Relation] [Item]
+	[Item] [Relation] [Item] Or [Item] [Relation] [Item]
+	where
+	-[Item] is an item in one of the categories
+	-[Relation] is any of the following (without quotes): "Is", "IsNot", "Before", "After", "ImmBefore", "ImmAfter"
+	-Or is just the word (without quotes) "Or"
+
+Click "Solve!" to solve the puzzle; if there is a valid solution, it will appear in a window.

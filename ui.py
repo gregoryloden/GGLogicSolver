@@ -1,9 +1,11 @@
-import tkinter
 import sys
 from LogicLanguage import *
 from tkinter import *
+from plaintext_solver import parse_file
+from solve import solve
+import os
 
-#handle button 1 clicks
+#handle Add Category clicks
 def b1click(event):
 	global li1
 	global e
@@ -13,7 +15,7 @@ def b1click(event):
 		li1.see(END)
 		e.delete(0, END)
 
-#handle button 2 clicks
+#handle Add Item clicks
 def b2click(event):
 	global li1
 	global e
@@ -27,7 +29,7 @@ def b2click(event):
 		li1.see(spot)
 		e.delete(0, END)
 
-#handle button 3 clicks
+#handle Add Relation clicks
 def b3click(event):
 	global li2
 	global e
@@ -37,29 +39,36 @@ def b3click(event):
 		li2.see(END)
 		e.delete(0, END)
 
-#handle button 3 clicks
+#handle Solve! clicks
 def b4click(event):
 	global li1
 	global li2
-	if len(sys.argv) > 1:
-		name = sys.argv[1]
-	else:
-		name = "puzzle.txt"
-	f = open(name, "wb")
-	#check for validity
-	categories = categoriesList()
-	topinfo = topInfo(categories)
-	if topinfo == None:
-		return
-	#start building the list of items
-	ls = [str(topinfo[0]) + " " + str(topinfo[1]) + " " + str(topinfo[2])]
-	for c in categories:
-		ls.extend(c)
-	ls.extend(list(li2.get(0, END)))
-	for l in ls:
-		f.write(bytes(l + "\n", "UTF-8"))
-	print("Saving to " + name)
-	f.close()
+	# f = open("puzzle.txt", "wb")
+	# #check for validity
+	# categories = categoriesList()
+	# topinfo = topInfo(categories)
+	# if topinfo == None:
+		# return
+	# #start building the list of items
+	# ls = [topinfo]
+	# for c in categories:
+		# ls.extend(c)
+	# ls.extend(list(li2.get(0, END)))
+	# for l in ls:
+		# f.write(bytes(l + "\n", "UTF-8"))
+	# print("Saving to puzzle.txt")
+	# f.close()
+	# #solve the puzzle and print it
+	print("Solving the puzzle")
+	answer = sortedAnswer(list(solve(parse_file("zebra.txt"))))#puzzle.txt"))))
+	response = Tk()
+	for row in answer:
+		r = Frame(response)
+		r.pack()
+		for item in row:
+			l = Label(r, text=item + "\t", width=12)
+			l.pack(side=LEFT)
+	response.mainloop()
 
 #delete an item from the categories list
 def li1backspace(event):
@@ -94,6 +103,9 @@ def goodstring(type):
 	if " " in e.get():
 		print("Your " + type + " cannot contain spaces")
 		return False
+	if e[0].isdigit()
+		print("Your " + type + " cannot start with a digit")
+		return False
 	return True
 
 #make sure the listbox has a selected object
@@ -109,19 +121,27 @@ def properrelation(s):
 	for i in range(0, len(s)):
 		s[i] = relationType(s[i], categoriesList())
 	changed = True
+	ors = 0
 	while changed:
 		changed = False
 		spot = 1
 		while spot < len(s) and len(s) > 1:
 			#relation between two items
-			#boolean relation between two relations
-			if ((s[spot] == 1 or s[spot] == 2) and spot > 0 and s[spot - 1] == 0 and spot < len(s) - 1 and s[spot + 1] == 0) or\
-				s[spot] == 3 and spot > 0 and s[spot - 1] == 4 and spot < len(s) - 1 and s[spot + 1] == 4:
+			if ((s[spot] == 1 or s[spot] == 2) and spot > 0 and s[spot - 1] == 0 and spot < len(s) - 1 and s[spot + 1] == 0):
 				s[spot - 1:spot + 2] = [4]
 				spot = 0
 				changed = True
+			#boolean relation between two relations
+			elif s[spot] == 3 and spot > 0 and s[spot - 1] == 4 and spot < len(s) - 1 and s[spot + 1] == 4:
+				if ors > 0:
+					print("You cannot have multiple boolean relations")
+					return False
+				s[spot - 1:spot + 2] = [4]
+				spot = 0
+				changed = True
+				ors = 1
 			spot += 1
-	if len(s) != 1 or s[0] != 4
+	if len(s) != 1 or s[0] != 4:
 		print("You need a proper relation")
 		return False
 	return True
@@ -146,15 +166,13 @@ def categoriesList():
 def topInfo(categories):
 	global li1
 	ccount = len(categories)
-	if ccount < 1:
-		print("You need at least 1 category with at least 1 item")
+	if ccount < 2:
+		print("You need at least 2 categories with at least 1 item each")
 		return None
 	icount = len(categories[0])
 	if icount < 2:
 		print("You need at least 1 item")
 		return None
-	ls = list(li1.get(0, END))
-	end = len(ls)
 	for c in categories:
 		if len(c) != icount:
 			print("All categories need the same number of items")
@@ -162,7 +180,7 @@ def topInfo(categories):
 	isordered = ordered(categories)
 	if isordered == None:
 		return None
-	return [ccount, icount - 1, isordered]
+	return str(ccount) + " " + str(icount - 1) + " " + str(isordered)
 
 #check if the first category is ordered
 def ordered(categories):
@@ -193,6 +211,20 @@ def relationType(s, categories):
 			return 0
 	return -1
 
+#order the items in the grid by the first one
+def sortedAnswer(answer):
+	result = []
+	for a in answer:
+		placed = False
+		for i in range(0, len(result)):
+			if a[0] < result[i][0]:
+				result.insert(i, a)
+				placed = True
+				break
+		if not placed:
+			result.append(a)
+	return result
+
 window = Tk()
 #c = Canvas(window, width=600, height=600, highlightthickness=0)
 #c = Canvas(window, width=600, height=600, bg='black', highlightthickness=0)
@@ -205,15 +237,21 @@ b3 = Button(window, text="Add Relation")
 b3.pack()
 e = Entry(window, font=('Courier New', 10), width=20)
 e.pack()
-la1 = Label(window, text="Categories")
+f1 = Frame(window)
+f1.pack()
+f2 = Frame(f1)
+f2.pack(side=LEFT)
+la1 = Label(f2, text="Categories")
 la1.pack()
-li1 = Listbox(window, font=('Courier New', 10), width=20)
+li1 = Listbox(f2, font=('Courier New', 10), width=20)
 li1.pack()
-la2 = Label(window, text="Relations")
+f3 = Frame(f1)
+f3.pack(side=RIGHT)
+la2 = Label(f3, text="Relations")
 la2.pack()
-li2 = Listbox(window, font=('Courier New', 10), width=20)
+li2 = Listbox(f3, font=('Courier New', 10), width=20)
 li2.pack()
-b4 = Button(window, text="Export!")
+b4 = Button(window, text="Solve!")
 b4.pack()
 b1.bind("<Button-1>", b1click)
 b2.bind("<Button-1>", b2click)
