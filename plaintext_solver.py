@@ -31,12 +31,10 @@ def parse_file(filename):
       m4 = helper[tokens[6]]
       fun_string2 = tokens[5] + "(m3, m4)"
       fun_string = "Or("+fun_string1+","+fun_string2+")"
-      print fun_string
     else: 
       m1=helper[tokens[0]]
       m2 = helper[tokens[2]]
       fun_string = tokens[1] + "(m1, m2)"
-      print fun_string
     puzzle.relationships.append(eval(fun_string))
   return puzzle
 
