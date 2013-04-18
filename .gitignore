@@ -4,3 +4,5 @@ in.als
 out.xml
 gui.py
 balloons.txt
+*.bat
+__pycache__

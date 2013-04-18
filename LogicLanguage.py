@@ -6,14 +6,17 @@ class Puzzle(object):
     self.relationships = []
 
   def xml(self):
+    """ Start of translating to xml. Currently doesn't work, or do much."""
     string = "<puzzle>"
     string += "<categories>"
 
   def alloy(self):
-    # returns a string
+    """ Returns a string of the model in Alloy terms.
+        Can be written to a file and then imported to Alloy."""
     # optimization opportunity: more efficient string concatenation
     string = ""
     ordered_cat = None
+    # include ordered categories
     for category in self.categories:
       if category.ordered:
         string +="open util/ordering[" + category.name + "]\n"
@@ -42,6 +45,7 @@ class Puzzle(object):
       for member in members:
         string += "one sig " + member.name + " extends " + name + " {}\n"
       string += "\n"
+      # If ordered, add the ordering
       if self.categories[index].ordered:
         string += "fact {\n"
         string += "\tfirst = " +  members[0].name + "\n"
@@ -58,6 +62,7 @@ class Puzzle(object):
     return string
    
 class Category(object):
+    """ A Category. Contains Members."""
   def __init__(self, name = "Category", amount = 5, ordered = False):
     self.amount = amount
     self.ordered = ordered
@@ -69,11 +74,13 @@ class Category(object):
     member.category = self
 
 class Member(object):
+    """ A Member. Contained in Categorys."""
   def __init__(self, name = "Object"):
     self.name = name
     self.category = None
 
 class Relationship(object):
+    """ A relationship between two objects. If the relationship is directional, the object in obj1 is considered to be on the left hand side. """
   def __init__(self, obj1 = None, obj2 = None):
    self.obj1 = obj1
    self.obj2 = obj2
@@ -88,16 +95,19 @@ class Relationship(object):
 
 
 class Is (Relationship):
+    """ A relationship that defines the objects as being directly related."""
   def alloy(self, order, trash):
     fname = self.get_field_name(order)
     return self.obj1.name + "." + fname + " = " + self.obj2.name
 
 class IsNot (Relationship):
+    """ A relationship that defines the objects as being unrelated."""
   def alloy(self, order, trash):
     fname = self.get_field_name(order)
     return self.obj1.name + "." + fname + " != " + self.obj2.name
 
 class Before (Relationship):
+    """ A relationship that defines the first object being somewhere before the second one."""
   def alloy(self, order, ordered_cat):
     part1 = self.obj1.name
     if self.obj1.category.name != ordered_cat:
@@ -108,6 +118,7 @@ class Before (Relationship):
     return part1 + " in " + part2 + ".prevs"
 
 class After (Relationship):
+    """ A relationship that defines the first object being somewhere after the second one."""
   def alloy(self, order, ordered_cat):
     part1 = self.obj1.name
     if self.obj1.category.name != ordered_cat:
@@ -118,6 +129,7 @@ class After (Relationship):
     return part1 + " in " + part2 + ".nexts"
 
 class ImmBefore (Relationship):
+    """ A relationship that defines the first object being immediately before the second one."""
   def alloy(self, order, ordered_cat):
     part1 = self.obj1.name
     if self.obj1.category.name != ordered_cat:
@@ -128,6 +140,7 @@ class ImmBefore (Relationship):
     return part1 + " = " + part2 + ".prev"
 
 class ImmAfter (Relationship):
+    """ A relationship that defines the first object being immediately after the second one."""
   def alloy(self, order, ordered_cat):
     part1 = self.obj1.name
     if self.obj1.category.name != ordered_cat:
@@ -138,6 +151,7 @@ class ImmAfter (Relationship):
     return part1 + " = " + part2 + ".next"
 
 class Or (Relationship):
+    """ A relationship that defines the two relationships (in the object slots)  as inclusive or."""
   def alloy(self, order, ordered_cat):
     part1 = self.obj1.alloy(order, ordered_cat)
     part2 = self.obj2.alloy(order, ordered_cat)

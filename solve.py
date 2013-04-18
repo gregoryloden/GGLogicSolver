@@ -18,6 +18,7 @@ def solve(imported_puzz = None):
   f = open(cwd+"/in.als", 'w')
   f.write(inals)
   f.close()
+  # fix the windows/mac problem
   sep = ":"
   if re.match("^win.*", platform):
     sep = ";"
@@ -26,6 +27,7 @@ def solve(imported_puzz = None):
   #display solution
   widths = [max(len(value) for value in column) + 4 for column in zip(*solution)]
   for line in solution:
+    # also print the solution to the command line for command line usage
     print(''.join('%-*s' % item for item in zip(widths, line)))
   return solution
 
